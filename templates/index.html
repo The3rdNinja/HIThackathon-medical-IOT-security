@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #fac761 25%, #ffff 50%, #87CEEB 25%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            overflow: hidden; /* Prevent horizontal scrolling */
+        }
+
+        .login-container {
+            margin-left: 600px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px 40px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #444;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #87CEEB;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #4682B4;
+        }
+
+        p {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        a {
+            color: #4682B4;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .robot-motti {
+            position: absolute;
+            top: 50%;
+            left: -50px;
+            transform: translateY(-50%);
+        }
+
+        .robot-motti img {
+            width: 400px; /* Resized image */
+            height: auto; /* Maintain aspect ratio */
+        }
+
+        .textbox {
+            position: absolute;
+            top: 40%;
+            left: 0px;
+            transform: translateY(-50%);
+        }
+
+        .textbox img {
+            width: 400px; /* Resized image */
+            margin-left: 250px;
+            margin-top: -10%;
+        }
+
+        .logo {
+            position: absolute;
+            top: 80%;
+            left: 0px;
+            transform: translateY(-50%);
+        }
+
+        .logo img {
+            width: 200px; /* Resized image */
+            margin-left: 1250px;
+            margin-top: 5%;
+        }
+
+        .heart {
+            position: absolute;
+            top: 25%;
+            left: 500px;
+            transform: translateY(-50%);
+        }
+
+        .heart img {
+            width: 500px; /* Resized image */
+            height: 100px;
+            margin-left: 200px;
+            margin-top: 0%;
+        }
+
+.circle-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin-top: 450px;
+    left: -310px;
+}
+
+circle {
+    transition: stroke-dashoffset 0.3s ease, stroke 0.3s ease;
+}
+
+.circle-progress {
+    transform: rotate(-90deg); /* Rotating to start the circle from the top */
+}
+
+.circle-background {
+    opacity: 0.2; /* Light background for the circle */
+}
+
+#percentage-text {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333; /* Text color */
+}
+
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <img src="../logo.png" alt="logoimg">
+    </div>
+    <div class="heart">
+        <img src="../heart.png" alt="heartimg">
+    </div>
+    <div class="robot-motti">
+        <img src="../robo_motti.png" alt="motti">
+    </div>
+    <div class="textbox">
+        <img src="../pixel-speech-bubble.gif" alt="box">
+    </div>
+    <div class="login-container">
+        <h1>Enter User ID:</h1>
+        <form id="login-form" action="/search" method="POST">
+            <input type="text" name="username" placeholder="USER ID:" required>
+            <button type="submit">Log In</button>
+        </form>
+        <p>Don't have an account? <a href="#">Sign Up</a></p>
+    </div>
+
+    <!-- Circle for the percentage -->
+    <div class="circle-container">
+        <svg width="150" height="150" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <circle class="circle-background" cx="60" cy="60" r="54" stroke="white" stroke-width="10"/>
+            <circle id="circle" class="circle-progress" cx="60" cy="60" r="54" stroke="green" stroke-width="10" fill="transparent" stroke-dasharray="339.292" stroke-dashoffset="339.292"/>
+            <text id="percentage-text" x="50%" y="50%" alignment-baseline="middle" text-anchor="middle" font-size="20" font-weight="bold" fill="#333">0%</text>
+        </svg>
+        
+    </div>
+    
+    
+    
+
+    <script>
+        document.querySelector("#login-form").addEventListener("submit", async (e) => {
+            e.preventDefault(); // Prevent the form from submitting in the traditional way
+
+            const formData = new FormData(e.target); // Get the form data
+            const username = formData.get("username"); // Extract the username input value
+
+            // Prepare the URL-encoded data
+            const urlEncodedData = new URLSearchParams();
+            urlEncodedData.append("username", username);  // Append the username as form data
+
+            try {
+                // Send the POST request with correct content type (URL-encoded data)
+                const response = await fetch("http://127.0.0.1:5000/search", {
+                    method: "POST",
+                    body: urlEncodedData, // Send URL-encoded form data
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",  // Set correct content type
+                    },
+                });
+
+                const data = await response.json(); // Parse the JSON response
+
+                // If the response is successful (user found)
+                if (response.ok) {
+                    const percentage = data.percentage;
+
+                    // Update the circle's appearance based on the percentage
+                    updateCircle(percentage);
+                    console.log(`User ID: ${data.userid}, Percentage: ${data.percentage}%`);
+                } else {
+                    // If user is not found
+                    console.log(data.error);
+                }
+            } catch (error) {
+                console.log("Error occurred while sending the request:", error);
+            }
+        });
+
+        // Function to update the circle's color and percentage
+        // Function to update the circle's color and border based on percentage
+        function updateCircle(percentage) {
+    // Convert percentage to a number using parseInt or Number()
+    const percentageValue = Number(percentage);
+
+    const circle = document.getElementById("circle");
+    const text = document.getElementById("percentage-text");
+
+    // Set the percentage text
+    text.textContent = `${percentageValue}%`;
+
+    // Calculate the stroke-dashoffset based on the percentage
+    const circleLength = 2 * Math.PI * 54; // Full circle length = 2 * PI * radius (radius = 54)
+    const dashoffset = circleLength - (circleLength * (percentageValue / 100)); // Set offset based on percentage
+
+    // Update the stroke-dashoffset to simulate the progress
+    circle.style.strokeDashoffset = dashoffset;
+
+    // Set stroke color based on percentage range (green to yellow to red)
+    let color;
+
+    if (percentageValue <= 50) {
+        // Transition from green to yellow (percentage <= 50)
+        let green = Math.floor(255 - (percentageValue * 5)); // Decrease green as percentage increases
+        let red = Math.floor(percentageValue * 5); // Increase red as percentage increases
+        color = `rgb(${red}, ${green}, 0)`; // Smooth transition from green to yellow
+    } else {
+        // Transition from yellow to red (percentage > 50)
+        let red = Math.floor((percentageValue - 50) * 5); // Increase red as percentage goes beyond 50
+        let green = Math.floor(255 - ((percentageValue - 50) * 5)); // Decrease green as percentage goes beyond 50
+        color = `rgb(${red}, ${green}, 0)`; // Smooth transition from yellow to red
+    }
+
+    // Apply the color to the stroke
+    circle.style.stroke = color;
+}
+
+    </script>
+</body>
+</html>
